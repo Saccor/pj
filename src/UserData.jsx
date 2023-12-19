@@ -1,26 +1,35 @@
-import React from "react"
-const userData = (props) => {
+import { useState } from "react"
+const UserData = (props) => {
 
+const [hideButton, setHideButton] = useState(true)
 const user = props.data
 
 return(
     <div>
-    {props.data && 
-    <div style={{
-    'width' : '20%',
-    'height' : '50%',
-    'display' : 'flex',
-    'justifyContent' : 'center',
-    'flexDirection' : 'column',
-    'fontSize' : '12px',
-    'backgroundColor' : 'whitesmoke'
-    }}>
-    <p>Email: {user.email}</p>
-    <p>Födelsedatum: {user.dob.date}</p>
-    <p>Kön: {user.gender}</p>
+    {hideButton && (
+    <div>
+        {props.data && 
+        <div style={{
+        'width' : '70%',
+        'height' : '50%',
+        'marginTop' : '20px',
+        'marginLeft' : '33px',
+        'display' : 'flex',
+        'justifyContent' : 'center',
+        'flexDirection' : 'column',
+        'fontSize' : '12px',
+        'backgroundColor' : 'whitesmoke'
+        }}>
+        <p>Email: {user.email}</p>
+        <p>Födelsedatum: {user.dob.date}</p>
+        <p>Kön: {user.gender}</p>
+        </div>
+        }
     </div>
-    }
+    )}
+    <br />
+    <button onClick={() => setHideButton(!hideButton)} className="button" >Dölj info</button>
     </div>
 )
 }
-export default userData
+export default UserData
