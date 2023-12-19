@@ -22,7 +22,7 @@ const addFriend = () => {
     fetchData();
 }
 
-const dataUsers = async (index) => {
+const dataUsers = (index) => {
 
     const selectedUser = users[index]
     setUsersData(selectedUser)
@@ -44,10 +44,10 @@ return(
             <br />
             <button className="button" onClick={() => dataUsers(index)}>Visa info</button>
             <br />
+            {usersData === user && <UserData data={user} /> }
             </li>
         ))}
         </ul>
-        {usersData.length > 0 && <UserData data={usersData} /> }
         <button className="button" onClick={addFriend}>Lägg till ny vän</button>
     </div>
 )
