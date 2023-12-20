@@ -28,7 +28,9 @@ return(
     </div>
     )}
     <br />
-    <button onClick={() => setHideButton(!hideButton)} className="button" >Dölj info</button>
+    <button onClick={() => setHideButton(!hideButton)} className="button" >
+        {hideButton ? "Dölj info" : "Visa igen"}
+    </button>
     </div>
 )
 }
