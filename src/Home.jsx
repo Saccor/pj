@@ -36,19 +36,22 @@ const dataUsers = (index) => {
 }
 
 const myGender = (e) => {
-    setFilter({ gender: e.target.value })
+    setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value }))
 }
 const myMaxAge = (e) => {
-    setFilter({ maxAge: +e.target.value })
+    setFilter(prevFilter => ({ ...prevFilter, maxAge: +e.target.value }))
 }
 const myMinAge = (e) => {
-    setFilter({ minAge: +e.target.value })
+    setFilter(prevFilter => ({ ...prevFilter, minAge: +e.target.value }))
 }
-const myFirstName = (e) => {
-    setFilter({ firstName: e.target.value })
+const sortByFirst = () => {
+    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.first > b.name.first ? 1 : -1))
 }
-const myLastName = (e) => {
-    setFilter({ lastName: e.target.value })
+const sortByLast = () => {
+    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.last > b.name.last ? 1 : -1))
+}
+const sortByAge = () => {
+    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
 }
 
 const userFilter = () => {
@@ -63,34 +66,18 @@ const userFilter = () => {
 
 return(
 <div>
-<h2>Filter user</h2>
+    <h2>Friends</h2>
+<div style={{
+    'borderRadius' : '5px',
+    'border' : '1px solid black',
+    'width' : '750px',
+    'height' : '270px',
+    'marginLeft' : '150px'
+}}>
+<h4>Filter user</h4>
 <label>
-Förnamn
-<select name="firstName" onChange={myFirstName}>
-    <option value="">Alla</option>
-    {users.map((user,index) => (
-        <option key={index} value={user.name.first} >
-            {user.name.first}
-        </option>
-    ))}
-</select>
-</label>
-<br />
-<label>
-Förnamn
-<select name="lasttName" onChange={myLastName}>
-    <option value="">Alla</option>
-    {users.map((user,index) => (
-        <option key={index} value={user.name.last} >
-            {user.name.last}
-        </option>
-    ))}
-</select>
-</label>
-<br />
-<label>
-Kön- 
-<select name="gender" onChange={myGender}>
+Kön:
+<select name="gender" className="option" onChange={myGender}>
 <option value="">Alla</option>
 <option value="male">Man</option>
 <option value="female">Kvinna</option>
@@ -98,20 +85,27 @@ Kön-
 </label>
 <br />
 <label>
-Max ålder-
-<input type="number" max="0" onChange={myMaxAge} />
+Max ålder:
+<input type="number" max="0" className="ages" onChange={myMaxAge} />
 </label>
 <br />
 <label>
-Min ålder-
-<input type="number" min="0" onChange={myMinAge} />
+Min ålder:
+<input type="number" min="0" className="ages" onChange={myMinAge} />
 </label>
-        <h3>Friends</h3>
+<br />
+<br />
+<button className="buttonTwo" onClick={sortByFirst}>Sort by Firstname</button>
+<button className="buttonTwo" onClick={sortByLast}>Sort by Lastname</button>
+<button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
+</div>
         <ul className="container">
         {userFilter().map((user, index) => (
             <li key={user.login.username}>
             <div>
-            <img src={user.picture.large} alt="" width="150px" height="150px" />
+            <img src={user.picture.large} alt="" width="150px" height="150px" style={{
+                'borderRadius' : '70px'
+            }}/>
             </div>
             <br />
             {user.name.title} {user.name.first} {user.name.last} 
