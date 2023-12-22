@@ -29,7 +29,7 @@ return(
     )}
     <br />
     <button onClick={() => setHideButton(!hideButton)} className="button" >
-        {hideButton ? "Dölj info" : "Visa igen"}
+        {hideButton ? "Hide info" : "Show again"}
     </button>
     </div>
 )
