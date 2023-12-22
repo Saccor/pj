@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import UserData from "./UserData";
+import Home from "./Home";
 import { Link } from "react-router-dom";
-const Friends = () => {
+const Friends = ({ }) => {
 
 const [users, setUsers] = useState([]);
 const [filteredUser, setFilteredUser] = useState([])
+const [latestUserData, setLatestUserData] = useState([])
 const [usersData, setUsersData] = useState(null)
 const [filter, setFilter] = useState({
     gender: null, 
@@ -19,7 +21,6 @@ const fetchData = async () => {
     let jsonUser = await resUser.json();
     console.log(jsonUser.results)
     setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
-    setFilteredUser((prevUsers) => [...prevUsers, ...jsonUser.results])
 } 
 
 useEffect(() => {
@@ -58,6 +59,13 @@ const sortByAge = () => {
 }
 
 useEffect(() => {
+
+    const latestFriends = users.slice(-5)
+    const latestUserData = latestFriends.map(user => ({ name: user.name.first, picture: user.picture.large }))
+
+    setUsersData(null)
+    setLatestUserData(latestUserData)
+
     const userFilter = () => {
     const filtered = users.filter((user) => 
     (user.gender === filter.gender || !filter.gender) &&
@@ -70,20 +78,14 @@ useEffect(() => {
     }
 
 userFilter()
-
-    if(usersData){
-    setFilteredUser((prevFilterUser) => 
-    prevFilterUser.map((user) => user.login.username === usersData.login.username ? usersData : user)
-    )
-    }
-
-},[filter,users, usersData]) 
+},[filter,users]) 
 
 return(
 <div>
     <h2>Friends</h2>
-  <Link to="/" style={{'textDecoration' : 'none'}}>Home</Link>
- 
+  <Link to="/" style={{'textDecoration' : 'none'}}>
+    <button className="button">Home</button>
+  </Link>
 <div style={{
     'borderRadius' : '5px',
     'border' : '1px solid black',
@@ -94,21 +96,21 @@ return(
 }}>
 <h4>Filter user</h4>
 <label>
-Kön:
+Gender:
 <select name="gender" className="option" onChange={myGender}>
-<option value="">Alla</option>
-<option value="male">Man</option>
-<option value="female">Kvinna</option>
+<option value="">All</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
 </select>
 </label>
 <br />
 <label>
-Max ålder:
+Max age:
 <input type="number" max="0" className="ages" onChange={myMaxAge} />
 </label>
 <br />
 <label>
-Min ålder:
+Min age:
 <input type="number" min="0" className="ages" onChange={myMinAge} />
 </label>
 <br />
@@ -128,13 +130,13 @@ Min ålder:
             <br />
             {user.name.title} {user.name.first} {user.name.last} 
             <br />
-            <button className="button" onClick={() => dataUsers(index)}>Visa info</button>
+            <button className="button" onClick={() => dataUsers(index)}>Show Info</button>
             <br />
-            {usersData !== null && usersData.login.username === user.login.username && <UserData data={user} /> }
+            {usersData === user && <UserData data={user} /> }
             </li>
         ))}
         </ul>
-        <button className="button" onClick={addFriend}>Lägg till ny vän</button>
+        <button className="button" onClick={addFriend}>Add friend</button>
     </div>
 )
 }
