@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const Friends = () => {
 
 const [users, setUsers] = useState([]);
+const [filteredUser, setFilteredUser] = useState([])
 const [usersData, setUsersData] = useState(null)
 const [filter, setFilter] = useState({
     gender: null, 
@@ -18,6 +19,7 @@ const fetchData = async () => {
     let jsonUser = await resUser.json();
     console.log(jsonUser.results)
     setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
+    setFilteredUser((prevUsers) => [...prevUsers, ...jsonUser.results])
 } 
 
 useEffect(() => {
@@ -26,11 +28,12 @@ fetchData();
 
 const addFriend = () => {
     fetchData();
+    setUsersData(null)
 }
 
 const dataUsers = (index) => {
 
-    const selectedUser = users[index]
+    const selectedUser = filteredUser[index]
     setUsersData(selectedUser)
 
 }
@@ -54,22 +57,32 @@ const sortByAge = () => {
     setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
 }
 
-const userFilter = () => {
-    return users.filter((user) => 
+useEffect(() => {
+    const userFilter = () => {
+    const filtered = users.filter((user) => 
     (user.gender === filter.gender || !filter.gender) &&
     (user.dob.age <= filter.maxAge || !filter.maxAge) && 
     (user.dob.age >= filter.minAge || !filter.minAge) &&
     (user.name.first === filter.firstName || !filter.firstName) &&
     (user.name.last === filter.lastName || !filter.lastName)
     )
-}
+    setFilteredUser(filtered)
+    }
+
+userFilter()
+
+    if(usersData){
+    setFilteredUser((prevFilterUser) => 
+    prevFilterUser.map((user) => user.login.username === usersData.login.username ? usersData : user)
+    )
+    }
+
+},[filter,users, usersData]) 
 
 return(
 <div>
     <h2>Friends</h2>
-    <button className="button">
-    <Link to="/" style={{'textDecoration' : 'none'}}>Home</Link>
-    </button>
+  <Link to="/" style={{'textDecoration' : 'none'}}>Home</Link>
  
 <div style={{
     'borderRadius' : '5px',
@@ -105,7 +118,7 @@ Min ålder:
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
         <ul className="container">
-        {userFilter().map((user, index) => (
+        {filteredUser.map((user, index) => (
             <li key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
@@ -117,7 +130,7 @@ Min ålder:
             <br />
             <button className="button" onClick={() => dataUsers(index)}>Visa info</button>
             <br />
-            {usersData === user && <UserData data={user} /> }
+            {usersData !== null && usersData.login.username === user.login.username && <UserData data={user} /> }
             </li>
         ))}
         </ul>
