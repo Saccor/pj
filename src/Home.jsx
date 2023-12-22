@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
-const Home = () => {
+const Home = ({}) => {
 return(
     <div>
         <h2>Home Page</h2>
 
         <h4>Recently added friends</h4>
-        <Link to="/Friends" style={{'textDecoration' : 'none'}}>Go to Friends</Link>
+        <Link to="/Friends" style={{'textDecoration' : 'none'}}>
+        <button className="button">Go to Friends</button>
+        </Link>
     </div>
 )
 }
