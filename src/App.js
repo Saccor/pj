@@ -1,4 +1,5 @@
 // App.js
+
 import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./Home";
@@ -16,7 +17,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={<Home top3Habits={habits.slice(0, 3)} />} // Pass the top 3 habits to Home
+          />
           <Route path="/friends" element={<Friends />} />
           <Route
             path="/habits"
@@ -25,7 +29,6 @@ function App() {
         </Routes>
       </header>
 
-      {/* Centered navigation */}
       <nav style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
         <Link to="/">Home</Link>
         <Link to="/friends">Friends</Link>
