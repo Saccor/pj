@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
 import UserData from "./UserData";
-import Home from "./Home";
 import { Link } from "react-router-dom";
-const Friends = ({ }) => {
+const Friends = ({ myLatestFriends}) => {
 
 const [users, setUsers] = useState([]);
-const [filteredUser, setFilteredUser] = useState([])
+const [filteredUser, setFilteredUser] = useState([]) //
 const [latestUserData, setLatestUserData] = useState([])
 const [usersData, setUsersData] = useState(null)
-const [filter, setFilter] = useState({
+const [filter, setFilter] = useState({ //filter useState 
     gender: null, 
     maxAge : null, 
     minAge : null,
@@ -16,6 +15,7 @@ const [filter, setFilter] = useState({
     lastName : null 
 })
 
+// Här fetchar vi datan 
 const fetchData = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
@@ -23,12 +23,14 @@ const fetchData = async () => {
     setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
 } 
 
-useEffect(() => {
+//anropar fetchData
+useEffect(() => { 
 fetchData();
 },[])
 
 const addFriend = () => {
     fetchData();
+    myLatestFriends([...latestUserData])
     setUsersData(null)
 }
 
@@ -39,6 +41,7 @@ const dataUsers = (index) => {
 
 }
 
+//Olika funktioner för filtrering
 const myGender = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value }))
 }
@@ -48,7 +51,7 @@ const myMaxAge = (e) => {
 const myMinAge = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, minAge: +e.target.value }))
 }
-const sortByFirst = () => {
+const sortByFirst = () => { //Dessa funktioner sorterar
     setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.first > b.name.first ? 1 : -1))
 }
 const sortByLast = () => {
@@ -61,8 +64,14 @@ const sortByAge = () => {
 useEffect(() => {
 
     const latestFriends = users.slice(-5)
-    const latestUserData = latestFriends.map(user => ({ name: user.name.first, picture: user.picture.large }))
-
+    const latestUserData = latestFriends.map(user => ({ 
+        name: {
+            title: user.name.title,
+            first: user.name.first,
+            last: user.name.last
+        },
+        picture: {large: user.picture.large}
+    }))
     setUsersData(null)
     setLatestUserData(latestUserData)
 
@@ -80,7 +89,7 @@ useEffect(() => {
 userFilter()
 },[filter,users]) 
 
-return(
+return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
     <h2>Friends</h2>
   <Link to="/" style={{'textDecoration' : 'none'}}>
@@ -94,7 +103,7 @@ return(
     'marginLeft' : '150px',
     'marginTop' : '15px'
 }}>
-<h4>Filter user</h4>
+<h4>Filter user</h4> 
 <label>
 Gender:
 <select name="gender" className="option" onChange={myGender}>
