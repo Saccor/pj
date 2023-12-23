@@ -8,9 +8,19 @@ import NewHabit from "./NewHabit";
 
 function App() {
   const [habits, setHabits] = useState([]);
+  const [top3Habits, setTop3Habits] = useState([]);
 
   const handleAddHabit = (newHabit) => {
     setHabits((prevHabits) => [...prevHabits, newHabit]);
+
+    // Update top 3 habits
+    setTop3Habits((prevTop3Habits) => {
+      const updatedTop3Habits = [...prevTop3Habits, newHabit].sort((a, b) =>
+        b.priority.localeCompare(a.priority)
+      ).slice(0, 3);
+
+      return updatedTop3Habits;
+    });
   };
 
   return (
@@ -19,7 +29,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Home top3Habits={habits.slice(0, 3)} />} // Pass the top 3 habits to Home
+            element={<Home top3Habits={top3Habits} />} // Pass the top 3 habits to Home
           />
           <Route path="/friends" element={<Friends />} />
           <Route
