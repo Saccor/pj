@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Friends = ({ myLatestFriends}) => {
 
 const [users, setUsers] = useState([]);
-const [filteredUser, setFilteredUser] = useState([]) //
+const [filteredUser, setFilteredUser] = useState([]) 
 const [latestUserData, setLatestUserData] = useState([])
 const [usersData, setUsersData] = useState(null)
 const [filter, setFilter] = useState({ //filter useState 
@@ -32,6 +32,13 @@ const addFriend = () => {
     fetchData();
     myLatestFriends([...latestUserData])
     setUsersData(null)
+    setFilteredUser([])
+}
+
+const addToHome = () => {
+    myLatestFriends([...filteredUser])
+    setUsersData(null)
+    setFilteredUser([])
 }
 
 const dataUsers = (index) => {
@@ -62,6 +69,15 @@ const sortByAge = () => {
 }
 
 useEffect(() => {
+    const userFilter = () => {
+    const filtered = users.filter((user) => 
+    (user.gender === filter.gender || !filter.gender) &&
+    (user.dob.age <= filter.maxAge || !filter.maxAge) && 
+    (user.dob.age >= filter.minAge || !filter.minAge) &&
+    (user.name.first === filter.firstName || !filter.firstName) &&
+    (user.name.last === filter.lastName || !filter.lastName)
+    )
+    setFilteredUser(filtered)
 
     const latestFriends = users.slice(-5)
     const latestUserData = latestFriends.map(user => ({ 
@@ -72,18 +88,7 @@ useEffect(() => {
         },
         picture: {large: user.picture.large}
     }))
-    setUsersData(null)
     setLatestUserData(latestUserData)
-
-    const userFilter = () => {
-    const filtered = users.filter((user) => 
-    (user.gender === filter.gender || !filter.gender) &&
-    (user.dob.age <= filter.maxAge || !filter.maxAge) && 
-    (user.dob.age >= filter.minAge || !filter.minAge) &&
-    (user.name.first === filter.firstName || !filter.firstName) &&
-    (user.name.last === filter.lastName || !filter.lastName)
-    )
-    setFilteredUser(filtered)
     }
 
 userFilter()
@@ -101,7 +106,7 @@ return( //Nedifrån använder vi filtrerings funktionerna och skapar list för f
     'width' : '750px',
     'height' : '270px',
     'marginLeft' : '150px',
-    'marginTop' : '15px'
+    'marginTop' : '15px',
 }}>
 <h4>Filter user</h4> 
 <label>
@@ -146,6 +151,7 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
+        <button className="button" onClick={addToHome}>Add to home</button>
     </div>
 )
 }
