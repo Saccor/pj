@@ -42,15 +42,13 @@ const addToHome = () => {
 }
 
 const dataUsers = (index) => {
-
     const selectedUser = filteredUser[index]
     setUsersData(selectedUser)
-
 }
 
 //Olika funktioner för filtrering
 const myGender = (e) => {
-    setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value }))
+    setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value  }))
 }
 const myMaxAge = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, maxAge: +e.target.value }))
@@ -68,8 +66,8 @@ const sortByAge = () => {
     setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
 }
 
-useEffect(() => {
-    const userFilter = () => {
+useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
+    const userFilter = () => { 
     const filtered = users.filter((user) => 
     (user.gender === filter.gender || !filter.gender) &&
     (user.dob.age <= filter.maxAge || !filter.maxAge) && 
@@ -78,8 +76,13 @@ useEffect(() => {
     (user.name.last === filter.lastName || !filter.lastName)
     )
     setFilteredUser(filtered)
+    }
 
-    const latestFriends = users.slice(-5)
+    userFilter()
+},[filter,users]) 
+
+useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
+    const latestFriends = users.slice(-5) //5 tar de 5 senaste fast den börjar vid index 5, därför används -5
     const latestUserData = latestFriends.map(user => ({ 
         name: {
             title: user.name.title,
@@ -89,10 +92,8 @@ useEffect(() => {
         picture: {large: user.picture.large}
     }))
     setLatestUserData(latestUserData)
-    }
 
-userFilter()
-},[filter,users]) 
+},[users])
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -151,7 +152,7 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
-        <button className="button" onClick={addToHome}>Add to home</button>
+        <button className="button" onClick={addToHome}>Save list</button>
     </div>
 )
 }
