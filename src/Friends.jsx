@@ -28,15 +28,16 @@ useEffect(() => {
 fetchData();
 },[])
 
-const addFriend = () => {
-    fetchData();
-    myLatestFriends([...latestUserData])
+const addFriend = async () => {
+    await fetchData();
+    setFilteredUser([...filteredUser])
+    await myLatestFriends([...filteredUser])
     setUsersData(null)
     setFilteredUser([])
 }
 
-const addToHome = () => {
-    myLatestFriends([...filteredUser])
+const addToHome = async () => {
+    await myLatestFriends([...filteredUser])
     setUsersData(null)
     setFilteredUser([])
 }
@@ -69,11 +70,11 @@ const sortByAge = () => {
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
     const filtered = users.filter((user) => 
-    (user.gender === filter.gender || !filter.gender) &&
-    (user.dob.age <= filter.maxAge || !filter.maxAge) && 
-    (user.dob.age >= filter.minAge || !filter.minAge) &&
-    (user.name.first === filter.firstName || !filter.firstName) &&
-    (user.name.last === filter.lastName || !filter.lastName)
+    (!filter.gender || user.gender.toLowerCase() === filter.gender.toLowerCase()) &&
+    (!filter.maxAge || user.dob.age <= filter.maxAge) && 
+    (!filter.minAge || user.dob.age >= filter.minAge) &&
+    (!filter.firstName || user.name.first === filter.firstName) &&
+    (!filter.lastName || user.name.last === filter.lastName)
     )
     setFilteredUser(filtered)
     }
@@ -82,7 +83,8 @@ useEffect(() => { //Denna useEffect kollar om filtrering och users object är li
 },[filter,users]) 
 
 useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
-    const latestFriends = users.slice(-5) //5 tar de 5 senaste fast den börjar vid index 5, därför används -5
+    if(filteredUser.length >= 5){
+    const latestFriends = filteredUser.slice(0, 5) //0,5 tar de 5 första friend från index 0 till 5
     const latestUserData = latestFriends.map(user => ({ 
         name: {
             title: user.name.title,
@@ -92,8 +94,9 @@ useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i ho
         picture: {large: user.picture.large}
     }))
     setLatestUserData(latestUserData)
-
-},[users])
+    myLatestFriends(latestUserData)
+    }
+},[filteredUser, myLatestFriends, users])
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -112,10 +115,10 @@ return( //Nedifrån använder vi filtrerings funktionerna och skapar list för f
 <h4>Filter user</h4> 
 <label>
 Gender:
-<select name="gender" className="option" onChange={myGender}>
+<select name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
 <option value="">All</option>
-<option value="male">Male</option>
-<option value="female">Female</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
 </select>
 </label>
 <br />
