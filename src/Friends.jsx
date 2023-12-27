@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
 import UserData from "./UserData";
-import Home from "./Home";
 import { Link } from "react-router-dom";
-const Friends = ({ }) => {
+const Friends = ({ myLatestFriends}) => {
 
 const [users, setUsers] = useState([]);
-const [filteredUser, setFilteredUser] = useState([])
+const [filteredUser, setFilteredUser] = useState([]) 
 const [latestUserData, setLatestUserData] = useState([])
 const [usersData, setUsersData] = useState(null)
-const [filter, setFilter] = useState({
+const [filter, setFilter] = useState({ //filter useState 
     gender: null, 
     maxAge : null, 
     minAge : null,
@@ -16,6 +15,7 @@ const [filter, setFilter] = useState({
     lastName : null 
 })
 
+// Här fetchar vi datan 
 const fetchData = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
@@ -23,24 +23,33 @@ const fetchData = async () => {
     setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
 } 
 
-useEffect(() => {
+//anropar fetchData
+useEffect(() => { 
 fetchData();
 },[])
 
-const addFriend = () => {
-    fetchData();
+const addFriend = async () => {
+    await fetchData();
+    setFilteredUser([...filteredUser])
+    await myLatestFriends([...filteredUser])
     setUsersData(null)
+    setFilteredUser([])
+}
+
+const addToHome = async () => {
+    await myLatestFriends([...filteredUser])
+    setUsersData(null)
+    setFilteredUser([])
 }
 
 const dataUsers = (index) => {
-
     const selectedUser = filteredUser[index]
     setUsersData(selectedUser)
-
 }
 
+//Olika funktioner för filtrering
 const myGender = (e) => {
-    setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value }))
+    setFilter(prevFilter => ({ ...prevFilter, gender: e.target.value  }))
 }
 const myMaxAge = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, maxAge: +e.target.value }))
@@ -48,7 +57,7 @@ const myMaxAge = (e) => {
 const myMinAge = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, minAge: +e.target.value }))
 }
-const sortByFirst = () => {
+const sortByFirst = () => { //Dessa funktioner sorterar
     setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.first > b.name.first ? 1 : -1))
 }
 const sortByLast = () => {
@@ -58,29 +67,38 @@ const sortByAge = () => {
     setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
 }
 
-useEffect(() => {
-
-    const latestFriends = users.slice(-5)
-    const latestUserData = latestFriends.map(user => ({ name: user.name.first, picture: user.picture.large }))
-
-    setUsersData(null)
-    setLatestUserData(latestUserData)
-
-    const userFilter = () => {
+useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
+    const userFilter = () => { 
     const filtered = users.filter((user) => 
-    (user.gender === filter.gender || !filter.gender) &&
-    (user.dob.age <= filter.maxAge || !filter.maxAge) && 
-    (user.dob.age >= filter.minAge || !filter.minAge) &&
-    (user.name.first === filter.firstName || !filter.firstName) &&
-    (user.name.last === filter.lastName || !filter.lastName)
+    (!filter.gender || user.gender.toLowerCase() === filter.gender.toLowerCase()) &&
+    (!filter.maxAge || user.dob.age <= filter.maxAge) && 
+    (!filter.minAge || user.dob.age >= filter.minAge) &&
+    (!filter.firstName || user.name.first === filter.firstName) &&
+    (!filter.lastName || user.name.last === filter.lastName)
     )
     setFilteredUser(filtered)
     }
 
-userFilter()
+    userFilter()
 },[filter,users]) 
 
-return(
+useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
+    if(filteredUser.length >= 5){
+    const latestFriends = filteredUser.slice(0, 5) //0,5 tar de 5 första friend från index 0 till 5
+    const latestUserData = latestFriends.map(user => ({ 
+        name: {
+            title: user.name.title,
+            first: user.name.first,
+            last: user.name.last
+        },
+        picture: {large: user.picture.large}
+    }))
+    setLatestUserData(latestUserData)
+    myLatestFriends(latestUserData)
+    }
+},[filteredUser, myLatestFriends, users])
+
+return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
     <h2>Friends</h2>
   <Link to="/" style={{'textDecoration' : 'none'}}>
@@ -92,15 +110,15 @@ return(
     'width' : '750px',
     'height' : '270px',
     'marginLeft' : '150px',
-    'marginTop' : '15px'
+    'marginTop' : '15px',
 }}>
-<h4>Filter user</h4>
+<h4>Filter user</h4> 
 <label>
 Gender:
-<select name="gender" className="option" onChange={myGender}>
+<select name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
 <option value="">All</option>
-<option value="male">Male</option>
-<option value="female">Female</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
 </select>
 </label>
 <br />
@@ -137,6 +155,7 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
+        <button className="button" onClick={addToHome}>Save list</button>
     </div>
 )
 }
