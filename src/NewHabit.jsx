@@ -14,7 +14,7 @@ const NewHabit = () => {
     };
     setHabits((prevHabits) => [...prevHabits, newHabit]);
 
-    // Reset form fields after adding a habit
+    
     setTitle("");
     setStreak(0);
     setPriority("low");

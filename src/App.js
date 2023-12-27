@@ -29,7 +29,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Home top3Habits={top3Habits} />} // Pass the top 3 habits to Home
+            element={<Home top3Habits={top3Habits} />}
           />
           <Route path="/friends" element={<Friends />} />
           <Route
