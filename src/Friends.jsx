@@ -2,12 +2,27 @@ import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
 const Friends = ({ myLatestFriends}) => {
+    
+const fetchData = async () => {
+    let resUser = await fetch('https://randomuser.me/api');
+    let jsonUser = await resUser.json();
+    return jsonUser.results;
+} 
 
-const [users, setUsers] = useState([]);
-const [filteredUser, setFilteredUser] = useState([]) 
+const getStoreUsers = () => {
+    const storedUsers = localStorage.getItem("friends");
+    return storedUsers ? JSON.parse(storedUsers) : [];
+}
+    
+const setStoreUsers = (updatedUsers) => {
+    localStorage.setItem("friends", JSON.stringify(updatedUsers));
+}
+
+const [filteredUsers, setFilteredUsers] = useState(getStoreUsers())
+const [users, setUsers] = useState(getStoreUsers());
 const [latestUserData, setLatestUserData] = useState([])
 const [usersData, setUsersData] = useState(null)
-const [filter, setFilter] = useState({ //filter useState 
+const [filter, setFilter] = useState({ 
     gender: null, 
     maxAge : null, 
     minAge : null,
@@ -15,35 +30,29 @@ const [filter, setFilter] = useState({ //filter useState
     lastName : null 
 })
 
-// Här fetchar vi datan 
-const fetchData = async () => {
-    let resUser = await fetch('https://randomuser.me/api');
-    let jsonUser = await resUser.json();
-    console.log(jsonUser.results)
-    setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
-} 
-
-//anropar fetchData
-useEffect(() => { 
-fetchData();
+useEffect(() => {
+    const fetchAndSetUsers = async () => {
+    const newUsers = await fetchData()
+    setUsers((prevUsers) => {
+    const updatedUsers = [...prevUsers, newUsers]
+    setStoreUsers(updatedUsers)
+    return updatedUsers;
+    })
+}
+fetchAndSetUsers()
 },[])
 
-const addFriend = async () => {
-    await fetchData();
-    setFilteredUser([...filteredUser])
-    await myLatestFriends([...filteredUser])
+const addFriend = () => {
+    const newUsers = fetchData();
+    const updatedUsers = [...users,...newUsers]
+    setUsers(updatedUsers)
+    setStoreUsers(updatedUsers)
     setUsersData(null)
-    setFilteredUser([])
-}
-
-const addToHome = async () => {
-    await myLatestFriends([...filteredUser])
-    setUsersData(null)
-    setFilteredUser([])
+    myLatestFriends(updatedUsers)
 }
 
 const dataUsers = (index) => {
-    const selectedUser = filteredUser[index]
+    const selectedUser = users[index]
     setUsersData(selectedUser)
 }
 
@@ -70,21 +79,21 @@ const sortByAge = () => {
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
     const filtered = users.filter((user) => 
-    (!filter.gender || user.gender.toLowerCase() === filter.gender.toLowerCase()) &&
+    (!filter.gender || user.gender === filter.gender) &&
     (!filter.maxAge || user.dob.age <= filter.maxAge) && 
     (!filter.minAge || user.dob.age >= filter.minAge) &&
     (!filter.firstName || user.name.first === filter.firstName) &&
     (!filter.lastName || user.name.last === filter.lastName)
     )
-    setFilteredUser(filtered)
+    console.log(filtered)
+    setFilteredUsers(filtered)
     }
 
     userFilter()
-},[filter,users]) 
+},[filter,users,]) 
 
 useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
-    if(filteredUser.length >= 5){
-    const latestFriends = filteredUser.slice(0, 5) //0,5 tar de 5 första friend från index 0 till 5
+    const latestFriends = filteredUsers.slice(-5) 
     const latestUserData = latestFriends.map(user => ({ 
         name: {
             title: user.name.title,
@@ -95,8 +104,7 @@ useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i ho
     }))
     setLatestUserData(latestUserData)
     myLatestFriends(latestUserData)
-    }
-},[filteredUser, myLatestFriends, users])
+},[ myLatestFriends, filteredUsers])
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -117,8 +125,8 @@ return( //Nedifrån använder vi filtrerings funktionerna och skapar list för f
 Gender:
 <select name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
 <option value="">All</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
 </select>
 </label>
 <br />
@@ -138,7 +146,7 @@ Min age:
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
         <ul className="container">
-        {filteredUser.map((user, index) => (
+        {filteredUsers && filteredUsers.map((user, index) => (
             <li key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
@@ -155,7 +163,6 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
-        <button className="button" onClick={addToHome}>Save list</button>
     </div>
 )
 }
