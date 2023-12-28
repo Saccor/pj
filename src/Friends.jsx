@@ -2,59 +2,52 @@ import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
 const Friends = ({ myLatestFriends}) => {
+
+    const [users, setUsers] = useState([]);
+    const [latestUserData, setLatestUserData] = useState([])
+    const [usersData, setUsersData] = useState(null)
+    const [filteredUsers, setFilteredUsers] = useState([])
+    const [filter, setFilter] = useState({ 
+        gender: '', 
+        maxAge : null, 
+        minAge : null,
+        firstName : null,
+        lastName : null 
+    })
     
 const fetchData = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
-    return jsonUser.results;
+    setUsers((prevUsers) => [...prevUsers,...jsonUser.results]) 
+    console.log(jsonUser.results)
 } 
 
+useEffect(() => {
+fetchData()
+},[])
+
+const addFriend = () => {
+    fetchData();
+    myLatestFriends([...filteredUsers, ...latestUserData])
+    setUsersData(null)
+}
+
+const dataUsers = (index) => {
+    const selectedUser = filteredUsers[index]
+    setUsersData(selectedUser)
+}
 const getStoreUsers = () => {
     const storedUsers = localStorage.getItem("friends");
     return storedUsers ? JSON.parse(storedUsers) : [];
 }
-    
-const setStoreUsers = (updatedUsers) => {
-    localStorage.setItem("friends", JSON.stringify(updatedUsers));
-}
-
-const [filteredUsers, setFilteredUsers] = useState(getStoreUsers())
-const [users, setUsers] = useState(getStoreUsers());
-const [latestUserData, setLatestUserData] = useState([])
-const [usersData, setUsersData] = useState(null)
-const [filter, setFilter] = useState({ 
-    gender: null, 
-    maxAge : null, 
-    minAge : null,
-    firstName : null,
-    lastName : null 
-})
 
 useEffect(() => {
-    const fetchAndSetUsers = async () => {
-    const newUsers = await fetchData()
-    setUsers((prevUsers) => {
-    const updatedUsers = [...prevUsers, newUsers]
-    setStoreUsers(updatedUsers)
-    return updatedUsers;
-    })
-}
-fetchAndSetUsers()
-},[])
-
-const addFriend = () => {
-    const newUsers = fetchData();
-    const updatedUsers = [...users,...newUsers]
-    setUsers(updatedUsers)
-    setStoreUsers(updatedUsers)
-    setUsersData(null)
-    myLatestFriends(updatedUsers)
-}
-
-const dataUsers = (index) => {
-    const selectedUser = users[index]
-    setUsersData(selectedUser)
-}
+    const storedUsers = getStoreUsers();
+    if (JSON.stringify(storedUsers) !== JSON.stringify(storedUsers)) {
+    setLatestUserData(storedUsers)
+    myLatestFriends(storedUsers)
+    }
+},[latestUserData, myLatestFriends])
 
 //Olika funktioner för filtrering
 const myGender = (e) => {
@@ -85,15 +78,14 @@ useEffect(() => { //Denna useEffect kollar om filtrering och users object är li
     (!filter.firstName || user.name.first === filter.firstName) &&
     (!filter.lastName || user.name.last === filter.lastName)
     )
-    console.log(filtered)
     setFilteredUsers(filtered)
-    }
-
+}
     userFilter()
-},[filter,users,]) 
+
+},[filter, users]) 
 
 useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
-    const latestFriends = filteredUsers.slice(-5) 
+    const latestFriends = users.slice(-5) 
     const latestUserData = latestFriends.map(user => ({ 
         name: {
             title: user.name.title,
@@ -102,9 +94,16 @@ useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i ho
         },
         picture: {large: user.picture.large}
     }))
+
+    const storedUsers = getStoreUsers();
+
+    if (JSON.stringify(latestUserData) !== JSON.stringify(storedUsers)) {
     setLatestUserData(latestUserData)
     myLatestFriends(latestUserData)
-},[ myLatestFriends, filteredUsers])
+    localStorage.setItem("latestUsersData", JSON.stringify(latestUserData));
+    }
+
+},[users])
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -146,7 +145,7 @@ Min age:
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
         <ul className="container">
-        {filteredUsers && filteredUsers.map((user, index) => (
+        {filteredUsers.map((user, index) => (
             <li key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
