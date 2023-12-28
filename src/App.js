@@ -1,23 +1,39 @@
+// App.jsx
 import Friends from './Friends';
 import Home from './Home';
-import { Routes, Route } from "react-router-dom"
-import { useState } from 'react';
+import Habits from './Habits';
+import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import './App.css';
+
 function App() {
+  const [recentFriends, setRecentFriends] = useState([]);
+  const [habits, setHabits] = useState([]);
 
-const [recentFriends, setRecentFriends] = useState([])
+  useEffect(() => {
+    // Load habits from local storage on component mount
+    const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
+    setHabits(savedHabits);
+  }, []);
 
-const myLatestFriends = (myFriends) => {
-  setRecentFriends(myFriends)
-}
+  // Define a function to handle habits change
+  const handleHabitsChange = (updatedHabits) => {
+    setHabits(updatedHabits);
+  };
+
+  const myLatestFriends = (myFriends) => {
+    setRecentFriends(myFriends);
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-      <Routes>
-        <Route path='/' element={<Home recentFriends={recentFriends} />}/>
-        <Route path='/Friends' element={<Friends myLatestFriends={myLatestFriends} />}/>
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Home recentFriends={recentFriends} habits={habits} />} />
+          <Route path="/Friends" element={<Friends myLatestFriends={myLatestFriends} />} />
+          {/* Pass onHabitsChange prop to Habits component */}
+          <Route path="/habits" element={<Habits habits={habits} onHabitsChange={handleHabitsChange} />} />
+        </Routes>
       </header>
     </div>
   );
