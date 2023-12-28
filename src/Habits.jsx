@@ -1,4 +1,3 @@
-// Habits.jsx
 import React, { useState, useEffect } from 'react';
 import NewHabit from './NewHabit';
 import './Habits.css';
@@ -8,9 +7,7 @@ const Habits = ({ habits, onHabitsChange }) => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
-    // Save habits to local storage whenever habits state changes
     localStorage.setItem('habits', JSON.stringify(habits));
-    // Notify the parent component about the change
     onHabitsChange(habits);
   }, [habits, onHabitsChange]);
 
@@ -65,12 +62,10 @@ const Habits = ({ habits, onHabitsChange }) => {
     <div className="habits-container">
       <h2>Habits Page</h2>
 
-      {/* NewHabit form */}
       <div className="new-habit-form">
         <NewHabit onAddHabit={addHabit} />
       </div>
 
-      {/* Displaying habits */}
       <div>
         <p>Created Habits:</p>
         <label>
@@ -105,10 +100,9 @@ const Habits = ({ habits, onHabitsChange }) => {
         </ul>
       </div>
 
-      {/* Save Habits button */}
       <button
         className="button save-button"
-        onClick={() => alert('Habits saved!')} // Replace with your save logic
+        onClick={() => alert('Habits saved!')}
       >
         Save Habits
       </button>

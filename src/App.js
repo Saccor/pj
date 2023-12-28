@@ -1,4 +1,3 @@
-// App.jsx
 import Friends from './Friends';
 import Home from './Home';
 import Habits from './Habits';
@@ -11,12 +10,12 @@ function App() {
   const [habits, setHabits] = useState([]);
 
   useEffect(() => {
-    // Load habits from local storage on component mount
+    // Ladda habits från localstorage
     const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
     setHabits(savedHabits);
   }, []);
 
-  // Define a function to handle habits change
+  // funktion som hanterar habits
   const handleHabitsChange = (updatedHabits) => {
     setHabits(updatedHabits);
   };
@@ -31,7 +30,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home recentFriends={recentFriends} habits={habits} />} />
           <Route path="/Friends" element={<Friends myLatestFriends={myLatestFriends} />} />
-          {/* Pass onHabitsChange prop to Habits component */}
           <Route path="/habits" element={<Habits habits={habits} onHabitsChange={handleHabitsChange} />} />
         </Routes>
       </header>

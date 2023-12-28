@@ -15,7 +15,7 @@ const [filter, setFilter] = useState({ //filter useState
     lastName : null 
 })
 
-// Här fetchar vi datan 
+// Här fetchar vi datan data
 const fetchData = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
