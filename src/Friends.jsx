@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
-const Friends = ({ myLatestFriends}) => {
+const Friends = () => {
     const [users, setUsers] = useState([]);
-    const [originalUsers, setOriginalUsers] = useState([]) //Denna state sparar original listan utan filtrering
     const [filteredUsers, setFilteredUsers] = useState([]) //Denna state filtrerar listan
-    const [latestUserData, setLatestUserData] = useState([]) 
     const [usersData, setUsersData] = useState(null) 
     const [filter, setFilter] = useState({ 
         gender: '', 
@@ -14,34 +12,24 @@ const Friends = ({ myLatestFriends}) => {
         firstName : null,
         lastName : null 
     })
-    
-const fetchData = async () => { //Fetchar datan och lägger i user
+
+const getLocal = localStorage.getItem("TEST");
+const storedUser = getLocal ? JSON.parse(getLocal) : [];
+console.log(storedUser)
+
+const addFriend = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
     //Två olika listor av samma data, en för filtrering och en för display för hemsidan
     setUsers((prevUsers) => [...prevUsers,...jsonUser.results]) 
-    setOriginalUsers((prevUsers) => [...prevUsers,...jsonUser.results])
-    console.log(jsonUser.results) 
-} 
-
-useEffect(() => { 
-fetchData()
-},[])
-
-const addFriend = () => {
-    fetchData();
+    setFilteredUsers((prevUsers) => [...prevUsers,...jsonUser.results])
+    localStorage.setItem("TEST", JSON.stringify(users));
 }
 
 const dataUsers = (index) => { 
     const selectedUser = filteredUsers[index]
     setUsersData(selectedUser)
 }
-
-useEffect(() => {
-    const storedUsers = getStoreUsers();
-    setLatestUserData(storedUsers)
-    myLatestFriends(storedUsers)
-},[])
 
 //Olika funktioner för filtrering
 const myGender = (e) => {
@@ -65,7 +53,7 @@ const sortByAge = () => {
 
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
-    const filtered = users.filter((user) => 
+    const filtered = filteredUsers.filter((user) => 
     (!filter.gender || user.gender === filter.gender) &&
     (!filter.maxAge || user.dob.age <= filter.maxAge) && 
     (!filter.minAge || user.dob.age >= filter.minAge) &&
@@ -76,34 +64,8 @@ useEffect(() => { //Denna useEffect kollar om filtrering och users object är li
 }
 
 userFilter()
-},[filter, users,]) 
 
-const getStoreUsers = () => { //Denna funktion hämtar data frpn localstorage
-    const storedUsers = localStorage.getItem("latestUsersData");
-    return storedUsers ? JSON.parse(storedUsers) : [];
-}
-
-useEffect(() => {
-
-    const latestFriends = originalUsers.slice(-5) //slice ger de sista 5 alltså de senaste 
-    const latestUserData = latestFriends.map(user => ({ //Datan från de 5 senaste går till latestuserdata som ska visa på homepage
-    name: {
-        title: user.name.title,
-        first: user.name.first,
-        last: user.name.last
-    },
-    picture: {large: user.picture.large}
-    }))
-
-    const storedUsers = getStoreUsers(); //Här ger vi storedUsers datan från localstorage
-
-    if (JSON.stringify(latestUserData) !== JSON.stringify(storedUsers)) {
-    setLatestUserData(latestUserData)
-    myLatestFriends(latestUserData)
-    localStorage.setItem("latestUsersData", JSON.stringify(latestUserData));
-    }
-
-},[originalUsers, myLatestFriends])
+},[filter, users]) 
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -145,7 +107,7 @@ Min age:
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
         <ul className="container">
-        {filteredUsers.map((user, index) => (
+        {storedUser.map((user, index) => (
             <li key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
@@ -162,7 +124,6 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
-
     </div>
 )
 }

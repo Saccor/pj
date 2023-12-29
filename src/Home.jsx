@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 
-const Home = ({ recentFriends, habits }) => {
+const Home = ({ habits }) => {
   const topHabits = habits
     ? habits.sort((a, b) => b.priority - a.priority).slice(0, 3)
     : [];
 
+    const getLocal = localStorage.getItem("TEST");
+    const storedUser = getLocal ? JSON.parse(getLocal) : [];
+    // console.log('storedUser', storedUser)
+    
   return (
     <div>
       <h2>Home Page</h2>
@@ -14,7 +18,7 @@ const Home = ({ recentFriends, habits }) => {
       <h4>Recently added friends</h4>
       <div>
         <ul className="container">
-          {recentFriends.map((friend) => (
+          {storedUser.slice(-5).map((friend) => (
             <li key={friend.name.first}>
               <div>
                 <img

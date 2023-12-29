@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [recentFriends, setRecentFriends] = useState([]);
   const [habits, setHabits] = useState([]);
 
   useEffect(() => {
@@ -20,16 +19,12 @@ function App() {
     setHabits(updatedHabits);
   };
 
-  const myLatestFriends = (myFriends) => {
-    setRecentFriends(myFriends);
-  };
-
   return (
     <div className="App">
       <header className="App-header">
         <Routes>
-          <Route path="/" element={<Home recentFriends={recentFriends} habits={habits} />} />
-          <Route path="/Friends" element={<Friends myLatestFriends={myLatestFriends} />} />
+          <Route path="/" element={<Home habits={habits} />} />
+          <Route path="/Friends" element={<Friends />} />
           <Route path="/habits" element={<Habits habits={habits} onHabitsChange={handleHabitsChange} />} />
         </Routes>
       </header>
