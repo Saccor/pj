@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
 const Friends = ({ myLatestFriends}) => {
-    const [originalUsers, setOriginalUsers] = useState([])
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([])
-    const [latestUserData, setLatestUserData] = useState([])
-    const [usersData, setUsersData] = useState(null)
+    const [originalUsers, setOriginalUsers] = useState([]) //Denna state sparar original listan utan filtrering
+    const [filteredUsers, setFilteredUsers] = useState([]) //Denna state filtrerar listan
+    const [latestUserData, setLatestUserData] = useState([]) 
+    const [usersData, setUsersData] = useState(null) 
     const [filter, setFilter] = useState({ 
         gender: '', 
         maxAge : null, 
@@ -18,30 +18,23 @@ const Friends = ({ myLatestFriends}) => {
 const fetchData = async () => { //Fetchar datan och lägger i user
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
+    //Två olika listor av samma data, en för filtrering och en för display för hemsidan
     setUsers((prevUsers) => [...prevUsers,...jsonUser.results]) 
+    setOriginalUsers((prevUsers) => [...prevUsers,...jsonUser.results])
     console.log(jsonUser.results) 
 } 
 
-useEffect(() => {
+useEffect(() => { 
 fetchData()
 },[])
-
-useEffect(() => {
-    const latestFriends = users.slice(-5);
-    setOriginalUsers(latestFriends);
-},[users])
 
 const addFriend = () => {
     fetchData();
 }
 
-const dataUsers = (index) => {
+const dataUsers = (index) => { 
     const selectedUser = filteredUsers[index]
     setUsersData(selectedUser)
-}
-const getStoreUsers = () => {
-    const storedUsers = localStorage.getItem("latestUsersData");
-    return storedUsers ? JSON.parse(storedUsers) : [];
 }
 
 useEffect(() => {
@@ -72,7 +65,7 @@ const sortByAge = () => {
 
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
-    const filtered = originalUsers.filter((user) => 
+    const filtered = users.filter((user) => 
     (!filter.gender || user.gender === filter.gender) &&
     (!filter.maxAge || user.dob.age <= filter.maxAge) && 
     (!filter.minAge || user.dob.age >= filter.minAge) &&
@@ -83,12 +76,17 @@ useEffect(() => { //Denna useEffect kollar om filtrering och users object är li
 }
 
 userFilter()
-},[filter, originalUsers,]) 
+},[filter, users,]) 
+
+const getStoreUsers = () => { //Denna funktion hämtar data frpn localstorage
+    const storedUsers = localStorage.getItem("latestUsersData");
+    return storedUsers ? JSON.parse(storedUsers) : [];
+}
 
 useEffect(() => {
 
-    const latestFriends = originalUsers.slice(-5) 
-    const latestUserData = latestFriends.map(user => ({ 
+    const latestFriends = originalUsers.slice(-5) //slice ger de sista 5 alltså de senaste 
+    const latestUserData = latestFriends.map(user => ({ //Datan från de 5 senaste går till latestuserdata som ska visa på homepage
     name: {
         title: user.name.title,
         first: user.name.first,
@@ -97,7 +95,7 @@ useEffect(() => {
     picture: {large: user.picture.large}
     }))
 
-    const storedUsers = getStoreUsers();
+    const storedUsers = getStoreUsers(); //Här ger vi storedUsers datan från localstorage
 
     if (JSON.stringify(latestUserData) !== JSON.stringify(storedUsers)) {
     setLatestUserData(latestUserData)
