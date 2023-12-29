@@ -15,37 +15,34 @@ const [filter, setFilter] = useState({ //filter useState
     lastName : null 
 })
 
-// Här fetchar vi datan data
+// Här fetchar vi datan 
 const fetchData = async () => {
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
-    console.log(jsonUser.results)
-    setUsers((prevUsers) => [...prevUsers, ...jsonUser.results])
+    //Två olika listor av samma data, en för filtrering och en för display för hemsidan
+    setUsers((prevUsers) => [...prevUsers,...jsonUser.results]) 
+    setOriginalUsers((prevUsers) => [...prevUsers,...jsonUser.results])
+    console.log(jsonUser.results) 
 } 
 
-//anropar fetchData
 useEffect(() => { 
-fetchData();
+fetchData()
 },[])
 
-const addFriend = async () => {
-    await fetchData();
-    setFilteredUser([...filteredUser])
-    await myLatestFriends([...filteredUser])
-    setUsersData(null)
-    setFilteredUser([])
+const addFriend = () => {
+    fetchData();
 }
 
-const addToHome = async () => {
-    await myLatestFriends([...filteredUser])
-    setUsersData(null)
-    setFilteredUser([])
-}
-
-const dataUsers = (index) => {
-    const selectedUser = filteredUser[index]
+const dataUsers = (index) => { 
+    const selectedUser = filteredUsers[index]
     setUsersData(selectedUser)
 }
+
+useEffect(() => {
+    const storedUsers = getStoreUsers();
+    setLatestUserData(storedUsers)
+    myLatestFriends(storedUsers)
+},[])
 
 //Olika funktioner för filtrering
 const myGender = (e) => {
@@ -70,33 +67,44 @@ const sortByAge = () => {
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
     const filtered = users.filter((user) => 
-    (!filter.gender || user.gender.toLowerCase() === filter.gender.toLowerCase()) &&
+    (!filter.gender || user.gender === filter.gender) &&
     (!filter.maxAge || user.dob.age <= filter.maxAge) && 
     (!filter.minAge || user.dob.age >= filter.minAge) &&
     (!filter.firstName || user.name.first === filter.firstName) &&
     (!filter.lastName || user.name.last === filter.lastName)
     )
-    setFilteredUser(filtered)
-    }
+    setFilteredUsers(filtered)
+}
 
-    userFilter()
-},[filter,users]) 
+userFilter()
+},[filter, users,]) 
 
-useEffect(() => { //Denna useEffect är för att de senaste 5 friends finns i home filen
-    if(filteredUser.length >= 5){
-    const latestFriends = filteredUser.slice(0, 5) //0,5 tar de 5 första friend från index 0 till 5
-    const latestUserData = latestFriends.map(user => ({ 
-        name: {
-            title: user.name.title,
-            first: user.name.first,
-            last: user.name.last
-        },
-        picture: {large: user.picture.large}
+const getStoreUsers = () => { //Denna funktion hämtar data frpn localstorage
+    const storedUsers = localStorage.getItem("latestUsersData");
+    return storedUsers ? JSON.parse(storedUsers) : [];
+}
+
+useEffect(() => {
+
+    const latestFriends = originalUsers.slice(-5) //slice ger de sista 5 alltså de senaste 
+    const latestUserData = latestFriends.map(user => ({ //Datan från de 5 senaste går till latestuserdata som ska visa på homepage
+    name: {
+        title: user.name.title,
+        first: user.name.first,
+        last: user.name.last
+    },
+    picture: {large: user.picture.large}
     }))
+
+    const storedUsers = getStoreUsers(); //Här ger vi storedUsers datan från localstorage
+
+    if (JSON.stringify(latestUserData) !== JSON.stringify(storedUsers)) {
     setLatestUserData(latestUserData)
     myLatestFriends(latestUserData)
+    localStorage.setItem("latestUsersData", JSON.stringify(latestUserData));
     }
-},[filteredUser, myLatestFriends, users])
+
+},[originalUsers, myLatestFriends])
 
 return( //Nedifrån använder vi filtrerings funktionerna och skapar list för friends
 <div>
@@ -117,8 +125,8 @@ return( //Nedifrån använder vi filtrerings funktionerna och skapar list för f
 Gender:
 <select name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
 <option value="">All</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
 </select>
 </label>
 <br />
@@ -138,7 +146,7 @@ Min age:
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
         <ul className="container">
-        {filteredUser.map((user, index) => (
+        {filteredUsers.map((user, index) => (
             <li key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
@@ -155,8 +163,11 @@ Min age:
         ))}
         </ul>
         <button className="button" onClick={addFriend}>Add friend</button>
-        <button className="button" onClick={addToHome}>Save list</button>
+
     </div>
 )
 }
 export default Friends
+
+
+
