@@ -1,20 +1,80 @@
+// App.js
+import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import NewTaskForm from './NewTaskForm';
+import TaskList from './TaskList';
 import Friends from './Friends';
 import Home from './Home';
 import Habits from './Habits';
-import { Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import './App.css';
+import './style.css';
 
 function App() {
   const [habits, setHabits] = useState([]);
 
   useEffect(() => {
-    // Ladda habits från localstorage
+    // Load habits from local storage
     const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
     setHabits(savedHabits);
   }, []);
 
-  // funktion som hanterar habits
+  // Function to add a new task
+  const addTask = (newTask) => {
+    setTasks([...tasks, newTask]);
+  };
+
+  const completeTask = (taskId) => {
+    console.log('Tasks before:', tasks);
+  
+    // Use the spread operator to create a new array with the updated task
+    setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: true } : task)));
+  
+    console.log('Tasks after:', tasks);
+  };
+
+  // Function to remove a task
+  const removeTask = (taskId) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
+
+  // Function to edit a task
+  const editTask = (editedTask) => {
+    setTasks(tasks.map((task) => (task.id === editedTask.id ? editedTask : task)));
+  };
+
+  // Function to filter tasks based on category
+  const filterTasks = (tasks, category) => {
+    if (category === 'all') {
+      return tasks;
+    }
+    return tasks.filter((task) => task.taskType === category);
+  };
+
+  // Function to sort tasks
+  const sortTasks = (tasks, sortType) => {
+    // Implement sorting logic based on sortType
+    return tasks.sort((a, b) => {
+      if (sortType === 'title-asc' || sortType === 'title-desc') {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+        if (sortType === 'title-asc') {
+          return titleA.localeCompare(titleB);
+        } else {
+          return titleB.localeCompare(titleA);
+        }
+      } else if (sortType === 'time-asc' || sortType === 'time-desc') {
+        if (sortType === 'time-asc') {
+          return a.timeEstimate - b.timeEstimate;
+        } else {
+          return b.timeEstimate - a.timeEstimate;
+        }
+      }
+      // Add more sorting options as needed
+      return 0;
+    });
+  };
+
+  // Function to handle habits change
   const handleHabitsChange = (updatedHabits) => {
     setHabits(updatedHabits);
   };

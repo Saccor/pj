@@ -15,7 +15,6 @@ const Friends = () => {
 
 const getLocal = localStorage.getItem("TEST");
 const storedUser = getLocal ? JSON.parse(getLocal) : [];
-console.log(storedUser)
 
 const addFriend = async () => {
     let resUser = await fetch('https://randomuser.me/api');
