@@ -25,9 +25,13 @@ function App() {
     setTasks([...tasks, newTask]);
   };
 
-  // Function to mark a task as completed
   const completeTask = (taskId) => {
+    console.log('Tasks before:', tasks);
+  
+    // Use the spread operator to create a new array with the updated task
     setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: true } : task)));
+  
+    console.log('Tasks after:', tasks);
   };
 
   // Function to remove a task
