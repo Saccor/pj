@@ -2,21 +2,20 @@ import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
 const Friends = ({ myLatestFriends}) => {
-
-const [users, setUsers] = useState([]);
-const [filteredUser, setFilteredUser] = useState([]) 
-const [latestUserData, setLatestUserData] = useState([])
-const [usersData, setUsersData] = useState(null)
-const [filter, setFilter] = useState({ //filter useState 
-    gender: null, 
-    maxAge : null, 
-    minAge : null,
-    firstName : null,
-    lastName : null 
-})
-
-// Här fetchar vi datan 
-const fetchData = async () => {
+    const [users, setUsers] = useState([]);
+    const [originalUsers, setOriginalUsers] = useState([]) //Denna state sparar original listan utan filtrering
+    const [filteredUsers, setFilteredUsers] = useState([]) //Denna state filtrerar listan
+    const [latestUserData, setLatestUserData] = useState([]) 
+    const [usersData, setUsersData] = useState(null) 
+    const [filter, setFilter] = useState({ 
+        gender: '', 
+        maxAge : null, 
+        minAge : null,
+        firstName : null,
+        lastName : null 
+    })
+    
+const fetchData = async () => { //Fetchar datan och lägger i user
     let resUser = await fetch('https://randomuser.me/api');
     let jsonUser = await resUser.json();
     //Två olika listor av samma data, en för filtrering och en för display för hemsidan
