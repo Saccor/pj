@@ -7,6 +7,7 @@ import Friends from './Friends';
 import Home from './Home';
 import Habits from './Habits';
 import './App.css';
+import './style.css';
 
 function App() {
   // State for tasks

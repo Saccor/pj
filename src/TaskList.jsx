@@ -54,8 +54,8 @@ const TaskList = ({ tasks, completeTask, removeTask, editTask, filterTasks, sort
       <ul>
         {sortedTasks.map((task) => (
           <li key={task.id}
-          style={{ backgroundColor: task.completed ? 'green' : 'white' }}
-          >
+                      style={{ backgroundColor: task.completed ? 'green' : 'white' }}
+>
             <span>{task.title}</span>
             <span>{task.description}</span>
             <span>Time Estimate: {task.timeEstimate} minutes</span>
