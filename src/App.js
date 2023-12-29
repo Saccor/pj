@@ -1,15 +1,24 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import NewTaskForm from './NewTaskForm';
 import TaskList from './TaskList';
 import Friends from './Friends';
 import Home from './Home';
+import Habits from './Habits';
 import './App.css';
 
 function App() {
   // State for tasks
   const [tasks, setTasks] = useState([]);
+  const [recentFriends, setRecentFriends] = useState([]);
+  const [habits, setHabits] = useState([]);
+
+  useEffect(() => {
+    // Load habits from local storage
+    const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
+    setHabits(savedHabits);
+  }, []);
 
   // Function to add a new task
   const addTask = (newTask) => {
@@ -63,16 +72,23 @@ function App() {
     });
   };
 
+  // Function to handle habits change
+  const handleHabitsChange = (updatedHabits) => {
+    setHabits(updatedHabits);
+  };
+
+  // Function to handle my latest friends
+  const myLatestFriends = (myFriends) => {
+    setRecentFriends(myFriends);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route
-            path="/newTask"
-            element={<NewTaskForm addTask={addTask} />}
-          />
+          <Route path="/" element={<Home recentFriends={recentFriends} habits={habits} />} />
+          <Route path="/friends" element={<Friends myLatestFriends={myLatestFriends} />} />
+          <Route path="/newTask" element={<NewTaskForm addTask={addTask} />} />
           <Route
             path="/tasks"
             element={
@@ -86,6 +102,7 @@ function App() {
               />
             }
           />
+          <Route path="/habits" element={<Habits habits={habits} onHabitsChange={handleHabitsChange} />} />
         </Routes>
       </header>
     </div>
