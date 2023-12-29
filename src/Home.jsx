@@ -3,11 +3,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 
-const Home = ({ recentFriends, habits }) => {
+const Home = ({ habits }) => {
   const topHabits = habits
     ? habits.sort((a, b) => b.priority - a.priority).slice(0, 3)
     : [];
 
+    const getLocal = localStorage.getItem("TEST");
+    const storedUser = getLocal ? JSON.parse(getLocal) : [];
+    // console.log('storedUser', storedUser)
+    
   return (
     <div>
       <h2>Home Page</h2>
@@ -16,19 +20,10 @@ const Home = ({ recentFriends, habits }) => {
       <Link to="/friends" style={{ textDecoration: 'none' }}>
         <button className="button">Go to Friends</button>
       </Link>
-
-      <h4>Tasks Management</h4>
-      <Link to="/newTask" style={{ textDecoration: 'none' }}>
-        <button className="button">Create New Task</button>
-      </Link>
-      <br />
-      <Link to="/tasks" style={{ textDecoration: 'none' }}>
-        <button className="button">View Tasks</button>
-      </Link>
-      <div>
-        <ul className="container">
-          {recentFriends.map((friend) => (
-            <li key={friend.name.first}>
+      <div className="list-container">
+        <ul className="list">
+          {storedUser.slice(-5).map((friend) => (
+            <li className='listItem' key={friend.name.first}>
               <div>
                 <img
                   src={friend.picture.large}
@@ -41,15 +36,22 @@ const Home = ({ recentFriends, habits }) => {
                 />
               </div>
               <br />
+              <p className='name'>
               {friend.name.title} {friend.name.first} {friend.name.last}
-              <br />
+              </p>
             </li>
           ))}
         </ul>
-        <Link to="/friends" style={{ textDecoration: 'none' }}>
-          <button className="button">Go to Friends</button>
-        </Link>
       </div>
+
+      <h4>Tasks Management</h4>
+      <Link to="/newTask" style={{ textDecoration: 'none' }}>
+        <button className="button">Create New Task</button>
+      </Link>
+      <br />
+      <Link to="/tasks" style={{ textDecoration: 'none' }}>
+        <button className="button">View Tasks</button>
+      </Link>
 
       <h4>Top 3 Habits</h4>
       <ul className="container">

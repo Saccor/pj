@@ -10,11 +10,8 @@ import './App.css';
 import './style.css';
 
 function App() {
-  // State for tasks
-  const [tasks, setTasks] = useState([]);
-  const [recentFriends, setRecentFriends] = useState([]);
   const [habits, setHabits] = useState([]);
-
+  const [tasks, setTasks] = useState([]);
   useEffect(() => {
     // Load habits from local storage
     const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
@@ -82,17 +79,12 @@ function App() {
     setHabits(updatedHabits);
   };
 
-  // Function to handle my latest friends
-  const myLatestFriends = (myFriends) => {
-    setRecentFriends(myFriends);
-  };
-
   return (
     <div className="App">
       <header className="App-header">
         <Routes>
-          <Route path="/" element={<Home recentFriends={recentFriends} habits={habits} />} />
-          <Route path="/friends" element={<Friends myLatestFriends={myLatestFriends} />} />
+          <Route path="/" element={<Home habits={habits} />} />
+          <Route path="/friends" element={<Friends />} />
           <Route path="/newTask" element={<NewTaskForm addTask={addTask} />} />
           <Route
             path="/tasks"
@@ -115,3 +107,4 @@ function App() {
 }
 
 export default App;
+
