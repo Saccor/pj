@@ -48,12 +48,20 @@ li{
     color: black;
   }
 
-  .container{
+  .list-container{
     display: flex;
-    width: 80vw;
-    flex-direction: row;
-    gap: 15px;
-    align-items: center;
+    justify-content: center;
+  }
+
+  .list {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .listItem{
+    width: 250px;
   }
 
   .option{
@@ -66,4 +74,12 @@ li{
   .ages{
     border-radius: 5px;
     border-color: lightgray;
+  }
+
+  .button {
+    background-color: #61dafb;
+  }
+
+  .name {
+    font-size: 18px;
   }

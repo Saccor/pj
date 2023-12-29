@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import UserData from "./UserData";
 import { Link } from "react-router-dom";
+import './App.css';
 const Friends = () => {
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]) //Denna state filtrerar listan
+    const [filteredUsers, setFilteredUsers] = useState([]) 
     const [usersData, setUsersData] = useState(null) 
     const [filter, setFilter] = useState({ 
         gender: '', 
@@ -41,18 +42,18 @@ const myMinAge = (e) => {
     setFilter(prevFilter => ({ ...prevFilter, minAge: +e.target.value }))
 }
 const sortByFirst = () => { //Dessa funktioner sorterar
-    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.first > b.name.first ? 1 : -1))
+    setFilteredUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.first > b.name.first ? 1 : -1))
 }
 const sortByLast = () => {
-    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.last > b.name.last ? 1 : -1))
+    setFilteredUsers((prevUsers) => [...prevUsers].sort((a,b) => a.name.last > b.name.last ? 1 : -1))
 }
 const sortByAge = () => {
-    setUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
+    setFilteredUsers((prevUsers) => [...prevUsers].sort((a,b) => a.dob.age - b.dob.age))
 }
 
 useEffect(() => { //Denna useEffect kollar om filtrering och users object är lika
     const userFilter = () => { 
-    const filtered = filteredUsers.filter((user) => 
+    const filtered = storedUser.filter((user) => 
     (!filter.gender || user.gender === filter.gender) &&
     (!filter.maxAge || user.dob.age <= filter.maxAge) && 
     (!filter.minAge || user.dob.age >= filter.minAge) &&
@@ -72,18 +73,13 @@ return( //Nedifrån använder vi filtrerings funktionerna och skapar list för f
   <Link to="/" style={{'textDecoration' : 'none'}}>
     <button className="button">Home</button>
   </Link>
-<div style={{
-    'borderRadius' : '5px',
-    'border' : '1px solid black',
-    'width' : '750px',
-    'height' : '270px',
-    'marginLeft' : '150px',
-    'marginTop' : '15px',
-}}>
+<div>
 <h4>Filter user</h4> 
 <label>
 Gender:
-<select name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
+<select style={{
+    'height' : '40px'
+}} name="gender" value={filter.gender} className="option" onChange={(e) => myGender(e)}>
 <option value="">All</option>
 <option value="male">Male</option>
 <option value="female">Female</option>
@@ -92,12 +88,16 @@ Gender:
 <br />
 <label>
 Max age:
-<input type="number" max="0" className="ages" onChange={myMaxAge} />
+<input style={{
+    'width' : '170px'
+}} type="number" max="0" className="ages" onChange={myMaxAge} />
 </label>
 <br />
 <label>
 Min age:
-<input type="number" min="0" className="ages" onChange={myMinAge} />
+<input style={{
+    'width' : '170px',
+}} type="number" min="0" className="ages" onChange={myMinAge} />
 </label>
 <br />
 <br />
@@ -105,24 +105,27 @@ Min age:
 <button className="buttonTwo" onClick={sortByLast}>Sort by Lastname</button>
 <button className="buttonTwo" onClick={sortByAge}>Sort by Age</button>
 </div>
-        <ul className="container">
-        {storedUser.map((user, index) => (
-            <li key={user.login.username}>
+<button style={{ 'marginTop' : '15px'}} className="button" onClick={addFriend}>Add friend</button>
+<div className="list-container">
+        <ul className="list">
+        {filteredUsers.map((user, index) => (
+            <li className="listItem" key={user.login.username}>
             <div>
             <img src={user.picture.large} alt="" width="150px" height="150px" style={{
                 'borderRadius' : '70px'
             }}/>
             </div>
             <br />
+            <p className="name">
             {user.name.title} {user.name.first} {user.name.last} 
-            <br />
+            </p>
             <button className="button" onClick={() => dataUsers(index)}>Show Info</button>
             <br />
             {usersData === user && <UserData data={user} /> }
             </li>
         ))}
         </ul>
-        <button className="button" onClick={addFriend}>Add friend</button>
+</div>
     </div>
 )
 }

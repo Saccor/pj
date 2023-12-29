@@ -84,7 +84,21 @@ function App() {
       <header className="App-header">
         <Routes>
           <Route path="/" element={<Home habits={habits} />} />
-          <Route path="/Friends" element={<Friends />} />
+          <Route path="/friends" element={<Friends />} />
+          <Route path="/newTask" element={<NewTaskForm addTask={addTask} />} />
+          <Route
+            path="/tasks"
+            element={
+              <TaskList
+                tasks={tasks}
+                completeTask={completeTask}
+                removeTask={removeTask}
+                editTask={editTask}
+                filterTasks={filterTasks}
+                sortTasks={sortTasks}
+              />
+            }
+          />
           <Route path="/habits" element={<Habits habits={habits} onHabitsChange={handleHabitsChange} />} />
         </Routes>
       </header>
@@ -93,3 +107,4 @@ function App() {
 }
 
 export default App;
+

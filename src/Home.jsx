@@ -20,19 +20,10 @@ const Home = ({ habits }) => {
       <Link to="/friends" style={{ textDecoration: 'none' }}>
         <button className="button">Go to Friends</button>
       </Link>
-
-      <h4>Tasks Management</h4>
-      <Link to="/newTask" style={{ textDecoration: 'none' }}>
-        <button className="button">Create New Task</button>
-      </Link>
-      <br />
-      <Link to="/tasks" style={{ textDecoration: 'none' }}>
-        <button className="button">View Tasks</button>
-      </Link>
-      <div>
-        <ul className="container">
+      <div className="list-container">
+        <ul className="list">
           {storedUser.slice(-5).map((friend) => (
-            <li key={friend.name.first}>
+            <li className='listItem' key={friend.name.first}>
               <div>
                 <img
                   src={friend.picture.large}
@@ -45,15 +36,22 @@ const Home = ({ habits }) => {
                 />
               </div>
               <br />
+              <p className='name'>
               {friend.name.title} {friend.name.first} {friend.name.last}
-              <br />
+              </p>
             </li>
           ))}
         </ul>
-        <Link to="/friends" style={{ textDecoration: 'none' }}>
-          <button className="button">Go to Friends</button>
-        </Link>
       </div>
+
+      <h4>Tasks Management</h4>
+      <Link to="/newTask" style={{ textDecoration: 'none' }}>
+        <button className="button">Create New Task</button>
+      </Link>
+      <br />
+      <Link to="/tasks" style={{ textDecoration: 'none' }}>
+        <button className="button">View Tasks</button>
+      </Link>
 
       <h4>Top 3 Habits</h4>
       <ul className="container">

@@ -10,15 +10,12 @@ return(
     <div>
         {props.data && 
         <div style={{
-        'width' : '70%',
+        'width' : '100%',
         'height' : '50%',
-        'marginTop' : '20px',
-        'marginLeft' : '33px',
         'display' : 'flex',
         'justifyContent' : 'center',
         'flexDirection' : 'column',
         'fontSize' : '12px',
-        'backgroundColor' : 'whitesmoke'
         }}>
         <p>Email: {user.email}</p>
         <p>Födelsedatum: {user.dob.date}</p>
