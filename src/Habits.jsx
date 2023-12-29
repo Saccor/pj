@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import NewHabit from './NewHabit';
-import './Habits.css';
 
 const Habits = ({ habits, onHabitsChange }) => {
   const [filterPriority, setFilterPriority] = useState('all');
@@ -58,16 +58,36 @@ const Habits = ({ habits, onHabitsChange }) => {
     (habit) => filterPriority === 'all' || habit.priority === filterPriority
   );
 
+  const habitsContainerStyle = {
+    fontSize: '24px',
+  };
+
+  const sectionTitleStyle = {
+    fontSize: '18px',
+    color: '#555',
+    marginBottom: '10px',
+  };
+
+  const homeButtonStyle = {
+    backgroundColor: '#61dafb',
+    color: 'white',
+    padding: '10px',
+    border: 'none',
+    cursor: 'pointer',
+    textDecoration: 'none', // Adding this to remove underlines in case it behaves as a link
+    marginRight: '10px', // Adjust margin as needed
+  };
+
   return (
-    <div className="habits-container">
-      <h2>Habits Page</h2>
+    <div style={habitsContainerStyle} className="habits-container">
+      <h1>Habits Page</h1>
 
       <div className="new-habit-form">
         <NewHabit onAddHabit={addHabit} />
       </div>
 
       <div>
-        <p>Created Habits:</p>
+        <p style={sectionTitleStyle}>Created Habits:</p>
         <label>
           Filter by Priority:
           <select
@@ -98,14 +118,12 @@ const Habits = ({ habits, onHabitsChange }) => {
             </li>
           ))}
         </ul>
-      </div>
 
-      <button
-        className="button save-button"
-        onClick={() => alert('Habits saved!')}
-      >
-        Save Habits
-      </button>
+        {/* "Home" button using Link */}
+        <Link to="/" style={homeButtonStyle} className="button">
+  Home
+</Link>
+      </div>
     </div>
   );
 };

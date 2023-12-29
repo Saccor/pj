@@ -1,6 +1,5 @@
 // NewHabit.jsx
 import React, { useState } from 'react';
-import './App.css';
 
 const NewHabit = ({ onAddHabit }) => {
   const [title, setTitle] = useState('');
@@ -40,7 +39,7 @@ const NewHabit = ({ onAddHabit }) => {
 
   return (
     <div>
-      <h2>Create a New Habit</h2>
+      <h2 style={{ fontSize: '18px', color: '#555', marginBottom: '10px', fontWeight: 'normal' }}>Create a New Habit</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Title:
