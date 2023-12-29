@@ -11,7 +11,7 @@ import './style.css';
 
 function App() {
   const [habits, setHabits] = useState([]);
-
+  const [tasks, setTasks] = useState([]);
   useEffect(() => {
     // Load habits from local storage
     const savedHabits = JSON.parse(localStorage.getItem('habits')) || [];
