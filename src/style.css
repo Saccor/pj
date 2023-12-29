@@ -1,0 +1,92 @@
+/* styles.css */
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  text-align: center;
+}
+
+header {
+  background-color: white;
+  padding: 20px;
+  color: white;
+}
+
+h2 {
+  margin-bottom: 15px;
+}
+
+form {
+  margin-top: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #61dafb;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4fa3d1;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+li span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+li button {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px;
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+li button:hover {
+  background-color: #c82333;
+}
+
+li button:last-child {
+  background-color: #ffc107;
+  color: white;
+}
+
+li button:last-child:hover {
+  background-color: #e0a800;
+}
+
+/* Add more styles as needed */
